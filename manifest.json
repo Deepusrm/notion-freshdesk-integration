@@ -1,0 +1,16 @@
+{
+  "platform-version": "2.3",
+  "product": {
+    "freshdesk": {
+      "events": {
+        "onConversationCreate":{
+          "handler":"onConversationCreateHandler"
+        }
+      }
+    }
+  },
+  "engines": {
+    "node": "18.19.0",
+    "fdk": "9.1.0"
+  }
+}

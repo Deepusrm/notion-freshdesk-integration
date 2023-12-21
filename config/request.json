@@ -1,0 +1,16 @@
+{
+    "onCreatingPrivateNote":{
+        "schema":{
+            "method":"POST",
+            "host":"api.notion.com",
+            "path":"v1/pages",
+            "headers":{
+                "Authorisation":"Bearer <%= access_token %>",
+                "Content-Type":"application/json"
+            }
+        },
+        "options":{
+            "isOAuth":true
+        }
+    }
+}

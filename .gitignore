@@ -1,0 +1,6 @@
+.fdk
+coverage/
+config/oauth_config.json
+server/test_data
+log/*
+.report.json
