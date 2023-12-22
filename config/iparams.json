@@ -1,1 +1,9 @@
-{}
+{
+  "notion_api_key": {
+    "display_name": "notion_api_key",
+    "description": "Please enter your notion_api_key",
+    "type": "text",
+    "required": true,
+    "secure":true
+  }
+}

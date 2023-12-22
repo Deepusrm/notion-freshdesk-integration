@@ -3,8 +3,8 @@
   "product": {
     "freshdesk": {
       "events": {
-        "onConversationCreate":{
-          "handler":"onConversationCreateHandler"
+        "onConversationCreate": {
+          "handler": "onConversationCreateHandler"
         }
       }
     }

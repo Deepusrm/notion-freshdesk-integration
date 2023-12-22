@@ -7,10 +7,27 @@ exports = {
   //   console.log('Welcome to freshdesk \n' + JSON.stringify(requesterData)+'\n'+JSON.stringify(agentData));
   // }
 
-  onConversationCreateHandler: function(args){
+  onConversationCreateHandler: async function(args){
     const noteData = args['data']['conversation'];
-    if(noteData.private==true){
-      
-    };
+    try{
+      if(noteData.private==true){
+        await request.invokeTemplate("onCreatingPrivateNote",{
+          context:{},
+          body:JSON.stringify(
+            {
+              "parent": {"database_id": "YOUR_DATABASE_ID"},
+              "properties": {
+                  "title": {"title": [{"text": {"content": "My Notion Page"}}]},
+                  "body": {"rich_text": [{"text": {"content": "This is the content of my page."}}]},
+              },
+            })
+          })
+        console.log("notion page created successfully!!");
+      }
+    }catch(error){
+      console.log(error);
+    }
+
+    console.log(noteData.private);
   }
 };
