@@ -1,5 +1,15 @@
 {
-    
+    "onGettingPages":{
+        "schema":{
+            "method":"GET",
+            "host":"api.notion.com",
+            "path":"/v1/pages/<%=iparam.notion_page %>",
+            "headers":{
+                "Authorisation":"Bearer <%= iparam.notion_api_key %>",
+                "Content-Type":"application/json"
+            }
+        }
+    },
     "onCreatingPrivateNote":{
         "schema":{
             "method":"POST",

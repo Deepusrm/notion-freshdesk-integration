@@ -11,11 +11,11 @@ exports = {
     const noteData = args['data']['conversation'];
     try{
       if(noteData.private==true){
-        await request.invokeTemplate("onCreatingPrivateNote",{
+        await $request.invokeTemplate("onCreatingPrivateNote",{
           context:{},
           body:JSON.stringify(
             {
-              "parent": {"database_id": "YOUR_DATABASE_ID"},
+              "parent": {"database_id": "<%=iparam.notion_page%>"},
               "properties": {
                   "title": {"title": [{"text": {"content": "My Notion Page"}}]},
                   "body": {"rich_text": [{"text": {"content": "This is the content of my page."}}]},
@@ -29,5 +29,12 @@ exports = {
     }
 
     console.log(noteData.private);
+
+    // try{
+    //   const page = await $request.invokeTemplate("onGettingPages",{});
+    //   console.log("Here's your page \n"+page);
+    // }catch(error){
+    //   console.log(error);
+    // }
   }
 };

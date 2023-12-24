@@ -2,6 +2,16 @@
   "notion_api_key": {
     "display_name": "notion_api_key",
     "description": "Please enter your notion_api_key",
+    "type": "api_key",
+    "required": true,
+    "type_attributes": {
+      "product": "name of the product"
+    },
+    "secure": true
+  },
+  "notion_page": {
+    "display_name": "notion_page",
+    "description": "Please enter your notion page",
     "type": "text",
     "required": true,
     "secure":true
