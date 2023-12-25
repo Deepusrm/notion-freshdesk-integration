@@ -6,7 +6,8 @@
             "path":"/v1/pages/<%=iparam.notion_page %>",
             "headers":{
                 "Authorisation":"Bearer <%= iparam.notion_api_key %>",
-                "Content-Type":"application/json"
+                "Content-Type":"application/json",
+                "Notion-version":"2022-06-28"
             }
         }
     },
@@ -17,7 +18,8 @@
             "path":"/v1/pages",
             "headers":{
                 "Authorisation":"Bearer <%= iparam.notion_api_key %>",
-                "Content-Type":"application/json"
+                "Content-Type":"application/json",
+                "Notion-version":"2022-06-28"
             }
         }
     }

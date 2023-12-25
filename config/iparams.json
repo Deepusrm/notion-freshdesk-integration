@@ -9,7 +9,7 @@
     },
     "secure": true
   },
-  "notion_page": {
+  "notion_page":{
     "display_name": "notion_page",
     "description": "Please enter your notion page",
     "type": "text",
