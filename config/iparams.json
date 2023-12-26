@@ -1,7 +1,7 @@
 {
-  "notion_api_key": {
-    "display_name": "notion_api_key",
-    "description": "Please enter your notion_api_key",
+  "api_key": {
+    "display_name": "api_key",
+    "description": "Please enter your api_key",
     "type": "api_key",
     "required": true,
     "type_attributes": {
@@ -9,11 +9,10 @@
     },
     "secure": true
   },
-  "notion_page":{
+  "notion_page": {
     "display_name": "notion_page",
-    "description": "Please enter your notion page",
+    "description": "Please enter your notion_page",
     "type": "text",
-    "required": true,
-    "secure":true
+    "required": true
   }
 }

@@ -14,7 +14,7 @@
             "host": "api.notion.com",
             "path": "/v1/pages/<%=iparam.notion_page %>",
             "headers": {
-              "Authorisation": "Bearer <%= iparam.notion_api_key %>",
+              "Authorization": "Bearer <%=iparam.api_key%>",
               "Content-Type": "application/json",
               "Notion-version": "2022-06-28"
             }
@@ -26,7 +26,7 @@
             "host": "api.notion.com",
             "path": "/v1/pages",
             "headers": {
-              "Authorisation": "Bearer <%= iparam.notion_api_key %>",
+              "Authorization": "Bearer <%=iparam.api_key%>",
               "Content-Type": "application/json",
               "Notion-version": "2022-06-28"
             }
