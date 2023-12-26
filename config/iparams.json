@@ -14,5 +14,11 @@
     "description": "Please enter your notion_page",
     "type": "text",
     "required": true
+  },
+  "notion_database":{
+    "display_name":"notion_database",
+    "description":"Please enter your notion_database_id",
+    "type":"text",
+    "required":true
   }
 }
