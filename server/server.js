@@ -48,17 +48,15 @@ exports = {
       for (let i = 1; i < todoList.length; i++) {
         bodyJSON["children"].push({
           object: "block",
-          type: "to_do",
-          to_do: {
+          type: "paragraph",
+          paragraph: {
             rich_text: [
               {
                 text: {
-                  content: todoList[i]
+                  content: i+todoList[i]
                 }
               }
             ],
-            checked: false,
-            color: "blue"
           }
         })
       }
