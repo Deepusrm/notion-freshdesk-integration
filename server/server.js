@@ -2,6 +2,7 @@ exports = {
   // args is a JSON block containing the payload information.
   // args['iparam'] will contain the installation parameter values.
   onConversationCreateHandler: async function (args) {
+
     const noteData = args["data"]["conversation"];
 
     // checking whether the mode of the note is private or not
@@ -48,8 +49,8 @@ exports = {
       for (let i = 1; i < todoList.length; i++) {
         bodyJSON["children"].push({
           object: "block",
-          type: "paragraph",
-          paragraph: {
+          type: "to_do",
+          to_do: {
             rich_text: [
               {
                 text: {
@@ -61,11 +62,17 @@ exports = {
         })
       }
       try {
-        await $request.invokeTemplate("onCreatingPrivateNote", {
+        const response = await $request.invokeTemplate("onCreatingPrivateNote", {
           context: {},
           body: JSON.stringify(bodyJSON)
         })
-        console.log("Notes added successfully to the notion :) ");
+        
+        // const dbstoreResponse = await $db.set(
+        //   noteData["ticket_id"],{
+        //     notion_page_id:response.response["id"]
+        //   }
+        // )
+        // console.log(dbstoreResponse);
       } catch (error) {
         console.log(error);
       }

@@ -5,3 +5,4 @@ server/test_data
 log/*
 .report.json
 .env
+dist
