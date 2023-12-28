@@ -7,8 +7,6 @@ exports = {
 
     // checking whether the mode of the note is private or not
     if (noteData.private == true) {
-      // for a to-do list, splitting whole string into an array
-      const todoList = noteData["body_text"].split("\n");
 
       // creating body JSON to send the details for POST request
       const bodyJSON = {
@@ -29,50 +27,59 @@ exports = {
           }
         },
         children: [
-          {
-            object: "block",
-            type: "heading_2",
-            heading_2: {
-              rich_text: [
-                {
-                  text: {
-                    content: todoList[0]
-                  }
-                }
-              ]
-            }
-          }
+          
         ]
       }
 
-      // for n number of to-do list, iterating, creating a new block object and pushing into children array
-      for (let i = 1; i < todoList.length; i++) {
+      // giving different layout for a list and a paragraph 
+      if(noteData["body"].includes("<ul>")==true || noteData["body"].includes("<ol>"==true)){
+        const todoList = noteData["body_text"].split("\n");
+
+        for (let i = 0; i < todoList.length; i++) {
+          bodyJSON["children"].push({
+            object: "block",
+            type: "bulleted_list_item",
+            bulleted_list_item: {
+              rich_text: [
+                {
+                  type:"text",
+                  text: {
+                    content: todoList[i]
+                  }
+                }
+              ],
+            }
+          })
+        }
+      }else{
         bodyJSON["children"].push({
-          object: "block",
-          type: "to_do",
-          to_do: {
+          object:"block",
+          type:"paragraph",
+          paragraph:{
             rich_text: [
               {
+                type:"text",
                 text: {
-                  content: i+todoList[i]
+                  content: noteData["body_text"]
                 }
               }
-            ],
+            ]
           }
         })
       }
+      // for n number of to-do list, iterating, creating a new block object and pushing into children array
       try {
-        const response = await $request.invokeTemplate("onCreatingPrivateNote", {
+        const responseData = await $request.invokeTemplate("onCreatingPrivateNote", {
           context: {},
           body: JSON.stringify(bodyJSON)
         })
+        const responseJSON = JSON.parse(responseData.response);
+
+        const ticketKey = `ticket-${noteData["ticket_id"]}`;
+        const dbstoreResponse = await $db.set(ticketKey,{"notionPageId":responseJSON.id});
+        console.log(dbstoreResponse);
+
         
-        // const dbstoreResponse = await $db.set(
-        //   noteData["ticket_id"],{
-        //     notion_page_id:response.response["id"]
-        //   }
-        // )
-        // console.log(dbstoreResponse);
       } catch (error) {
         console.log(error);
       }
