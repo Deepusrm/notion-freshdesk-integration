@@ -31,10 +31,11 @@ exports = {
         ]
       }
 
+      console.log(noteData["body_text"]);
       // giving different layout for a list and a paragraph 
-      if(noteData["body"].includes("<ul>")==true || noteData["body"].includes("<ol>")==true || noteData["body"].includes("<li>")==true){
-        const todoList = noteData["body_text"].split("\n");
-
+      if(noteData["body"].includes("<ul>")==true || noteData["body"].includes("<ol>")==true || noteData["body"].includes("</li>")==true){
+        const todoList = noteData["body_text"].split("  ");
+        console.log(JSON.stringify(todoList));
         for (let i = 0; i < todoList.length; i++) {
           bodyJSON["children"].push({
             object: "block",
