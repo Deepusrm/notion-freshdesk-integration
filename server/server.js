@@ -32,7 +32,7 @@ exports = {
       }
 
       // giving different layout for a list and a paragraph 
-      if(noteData["body"].includes("<ul>")==true || noteData["body"].includes("<ol>"==true)){
+      if(noteData["body"].includes("<ul>")==true || noteData["body"].includes("<ol>")==true || noteData["body"].includes("<li>")==true){
         const todoList = noteData["body_text"].split("\n");
 
         for (let i = 0; i < todoList.length; i++) {
