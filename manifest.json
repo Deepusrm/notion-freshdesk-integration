@@ -31,6 +31,18 @@
               "Notion-version": "2022-06-28"
             }
           }
+        },
+        "onAppendingToExistingNote": {
+          "schema": {
+            "method": "PATCH",
+            "host": "api.notion.com",
+            "path": "/v1/blocks/<%= context.page_id %>",
+            "headers": {
+              "Authorization": "Bearer <%=iparam.api_key%>",
+              "Content-Type": "application/json",
+              "Notion-version": "2022-06-28"
+            }
+          }
         }
       }
     }
