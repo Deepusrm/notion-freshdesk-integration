@@ -1,18 +1,13 @@
 exports = {
   // args is a JSON block containing the payload information.
   // args['iparam'] will contain the installation parameter values.
-  
-
-
   onConversationCreateHandler: async function (args) {
     const noteData = args.data.conversation;
 
     if (noteData.private == true) {
       const ticketKey = `ticket-${noteData["ticket_id"]}`;
       try {
-        const dbstore = $db.set(ticketKey, { "notionPageId": ""}, {setIf: "not_exist" });
-        console.log(dbstore);
-
+        await $db.set(ticketKey, { "notionPageId": "" }, { setIf: "not_exist" });
         const bodyJSON = {
           parent: {
             type: "database_id",
@@ -20,14 +15,12 @@ exports = {
           },
           properties: {
             Name: {
-              title: [
-                {
+              title: [{
                   type: "text",
                   text: {
                     content: "TICKET #" + noteData["ticket_id"]
                   }
-                }
-              ]
+                }]
             }
           },
           children: []
@@ -41,27 +34,26 @@ exports = {
             body: JSON.stringify(bodyJSON)
           })
           const responseJSON = JSON.parse(responseData.response);
-          $db.update(ticketKey, "set", { "notionPageId": responseJSON.id },{setIf:"exist"})
+          $db.update(ticketKey, "set", { "notionPageId": responseJSON.id }, { setIf: "exist" })
         } catch (error1) {
-          console.log("Error 1:"+error1);
+          console.log("Error 1:" + error1);
         }
 
       } catch (error2) {
-        // console.log("Error 2"+error2);
-        const notion_page_id = $db.get(ticketKey).notionPageId;
-        // console.log("Page id "+notion_page_id)
+        const notion_page_id = await $db.get(ticketKey);
+
         const blockJSON = {
-          children:[]
+          children: []
         }
-        appendBlock(blockJSON,noteData["body"],noteData["body_text"]);
-        try{
-          await $request.invokeTemplate("onAppendingToExistingNote",{
-            context:{page_id:notion_page_id},
-            body:JSON.stringify(blockJSON)
+        appendBlock(blockJSON, noteData["body"], noteData["body_text"]);
+        try {
+          await $request.invokeTemplate("onAppendingToExistingNote", {
+            context: { page_id: notion_page_id["notionPageId"] },
+            body: JSON.stringify(blockJSON)
           });
-          // console.log(responseData);
-        }catch(error3){
-          console.log("Error 3"+error3);
+          console.log("note added successfully");
+        } catch (error3) {
+          console.log(error3);
         }
       }
     }
@@ -103,4 +95,9 @@ function appendBlock(data, body, bodyText) {
       }
     })
   }
+  data["children"].push({
+    object:"block",
+    type:"divider",
+    divider:{}
+  })
 }

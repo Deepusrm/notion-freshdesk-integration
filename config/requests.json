@@ -27,7 +27,7 @@
         "schema":{
             "method":"PATCH",
             "host":"api.notion.com",
-            "path":"/v1/blocks/<%= context.page_id %>",
+            "path":"/v1/blocks/<%=context.page_id%>/children",
             "headers":{
                 "Authorization":"Bearer <%=iparam.api_key%>",
                 "Content-Type":"application/json",
