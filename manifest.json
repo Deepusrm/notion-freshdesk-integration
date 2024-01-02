@@ -8,18 +8,6 @@
         }
       },
       "requests": {
-        "onGettingPages": {
-          "schema": {
-            "method": "GET",
-            "host": "api.notion.com",
-            "path": "/v1/pages/<%=iparam.notion_page %>",
-            "headers": {
-              "Authorization": "Bearer <%=iparam.api_key%>",
-              "Content-Type": "application/json",
-              "Notion-version": "2022-06-28"
-            }
-          }
-        },
         "onCreatingPrivateNote": {
           "schema": {
             "method": "POST",
