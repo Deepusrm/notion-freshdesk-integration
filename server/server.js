@@ -17,11 +17,11 @@ exports = {
           properties: {
             Name: {
               title: [{
-                  type: "text",
-                  text: {
-                    content: "TICKET #" + noteData["ticket_id"]
-                  }
-                }]
+                type: "text",
+                text: {
+                  content: "TICKET #" + noteData["ticket_id"]
+                }
+              }]
             }
           },
           children: []
@@ -69,8 +69,24 @@ exports = {
 
 function appendBlock(data, body, bodyText) {
   if (body.includes("<ol>") == true || body.includes("<ul>") || body.includes("</li>") == true) { // for list type of content
-    const todoList = bodyText.split("  ");
-    for (let i = 0; i < todoList.length; i++) {
+    const list = bodyText.split("  ");
+    // for (let i = 0; i < todoList.length; i++) {
+    //   data["children"].push({
+    //     object: "block",
+    //     type: "bulleted_list_item",
+    //     bulleted_list_item: {
+    //       rich_text: [
+    //         {
+    //           type: "text",
+    //           text: {
+    //             content: todoList[i]
+    //           }
+    //         }
+    //       ]
+    //     }
+    //   })
+    // }
+    list.forEach(element => {
       data["children"].push({
         object: "block",
         type: "bulleted_list_item",
@@ -79,13 +95,13 @@ function appendBlock(data, body, bodyText) {
             {
               type: "text",
               text: {
-                content: todoList[i]
+                content: element
               }
             }
           ]
         }
       })
-    }
+    });
   } else { // for paragraph type of content
     data["children"].push({
       object: "block",
@@ -103,9 +119,9 @@ function appendBlock(data, body, bodyText) {
     })
   }
   // to add a divider between separate notes of the same ticket.
-  data["children"].push({ 
-    object:"block",
-    type:"divider",
-    divider:{}
+  data["children"].push({
+    object: "block",
+    type: "divider",
+    divider: {}
   })
 }
