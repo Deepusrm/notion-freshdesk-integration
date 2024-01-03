@@ -1,12 +1,7 @@
 {
-  "platform-version": "2.3",
-  "product": {
-    "freshdesk": {
-      "events": {
-        "onConversationCreate": {
-          "handler": "onConversationCreateHandler"
-        }
-      },
+  "platform-version": "3.0",
+  "modules": {
+    "common": {
       "requests": {
         "onCreatingPrivateNote": {
           "schema": {
@@ -31,6 +26,13 @@
               "Notion-version": "2022-06-28"
             }
           }
+        }
+      }
+    },
+    "support_ticket": {
+      "events": {
+        "onConversationCreate": {
+          "handler": "onConversationCreateHandler"
         }
       }
     }

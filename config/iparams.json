@@ -2,11 +2,8 @@
   "api_key": {
     "display_name": "api_key",
     "description": "Please enter your api_key",
-    "type": "api_key",
+    "type": "text",
     "required": true,
-    "type_attributes": {
-      "product": "name of the product"
-    },
     "secure": true
   },
   "notion_database":{
