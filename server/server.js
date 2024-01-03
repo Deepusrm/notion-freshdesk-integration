@@ -39,8 +39,9 @@ exports = {
 
           // updating the notion page id from null to the actual value
           $db.update(ticketKey, "set", { "notionPageId": responseJSON.id }, { setIf: "exist" })
+          console.log("note created successfully!")
         } catch (error1) {
-          throw new Error(error1);
+          throw new Error(error1.response);
         }
 
       } catch (error2) { // this code block is to the case if the notion page for that particular ticket has already been created
@@ -60,7 +61,7 @@ exports = {
           });
           console.log("note added successfully");
         } catch (error3) {
-          throw new Error(error3);
+          throw new Error(error3.response);
         }
       }
     }
@@ -68,24 +69,8 @@ exports = {
 }
 
 function appendBlock(data, body, bodyText) {
-  if (body.includes("<ol>") == true || body.includes("<ul>") || body.includes("</li>") == true) { // for list type of content
-    const list = bodyText.split("  ");
-    // for (let i = 0; i < todoList.length; i++) {
-    //   data["children"].push({
-    //     object: "block",
-    //     type: "bulleted_list_item",
-    //     bulleted_list_item: {
-    //       rich_text: [
-    //         {
-    //           type: "text",
-    //           text: {
-    //             content: todoList[i]
-    //           }
-    //         }
-    //       ]
-    //     }
-    //   })
-    // }
+  const list = bodyText.split("  ");
+  if (body.includes("<ol>") == true || body.includes("<ul>") ==true || body.includes("</li>") == true) { // for list type of content
     list.forEach(element => {
       data["children"].push({
         object: "block",
