@@ -35,6 +35,13 @@
           "handler": "onConversationCreateHandler"
         }
       }
+    },
+    "service_ticket":{
+      "events": {
+        "onConversationCreate": {
+          "handler": "onConversationCreateHandler"
+        }
+      }
     }
   },
   "engines": {

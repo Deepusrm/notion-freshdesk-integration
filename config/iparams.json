@@ -4,12 +4,14 @@
     "description": "Please enter your api_key",
     "type": "text",
     "required": true,
-    "secure": true
+    "secure": true,
+    "modules":["support_ticket","service_ticket"]
   },
   "notion_database":{
     "display_name":"notion_database",
     "description":"Please enter your notion_database_id",
     "type":"text",
-    "required":true
+    "required":true,
+    "modules":["support_ticket","service_ticket"]
   }
 }
