@@ -1,3 +1,4 @@
+var functions = require('./functions');
 exports = {
   // args is a JSON block containing the payload information.
   // args['iparam'] will contain the installation parameter values.
@@ -28,7 +29,7 @@ exports = {
         }
 
         // calling the function to append block based on the content
-        appendBlock(bodyJSON, noteData["body"], noteData["body_text"]);
+        functions.appendBlock(bodyJSON, noteData["body"], noteData["body_text"]);
 
         try {
           const responseData = await $request.invokeTemplate("onCreatingPrivateNote", {
@@ -52,7 +53,7 @@ exports = {
         }
 
         // calling the function to append block based on the content
-        appendBlock(blockJSON, noteData["body"], noteData["body_text"]);
+        functions.appendBlock(blockJSON, noteData["body"], noteData["body_text"]);
 
         try {
           await $request.invokeTemplate("onAppendingToExistingNote", {
@@ -68,45 +69,3 @@ exports = {
   }
 }
 
-function appendBlock(data, body, bodyText) {
-  const list = bodyText.split("  ");
-  if (body.includes("<ol>") == true || body.includes("<ul>") ==true || body.includes("</li>") == true) { // for list type of content
-    list.forEach(element => {
-      data["children"].push({
-        object: "block",
-        type: "bulleted_list_item",
-        bulleted_list_item: {
-          rich_text: [
-            {
-              type: "text",
-              text: {
-                content: element
-              }
-            }
-          ]
-        }
-      })
-    });
-  } else { // for paragraph type of content
-    data["children"].push({
-      object: "block",
-      type: "paragraph",
-      paragraph: {
-        rich_text: [
-          {
-            type: "text",
-            text: {
-              content: bodyText
-            }
-          }
-        ]
-      }
-    })
-  }
-  // to add a divider between separate notes of the same ticket.
-  data["children"].push({
-    object: "block",
-    type: "divider",
-    divider: {}
-  })
-}
