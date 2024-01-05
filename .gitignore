@@ -6,3 +6,4 @@ log/*
 .report.json
 .env
 dist
+server/.DS_Store
