@@ -7,7 +7,8 @@ exports = {
 
     if (noteData.private == true) {
       const ticketKey = `ticket-${noteData["ticket_id"]}`;
-      var date = utilFunctions.returnReadableDate(noteData["created_at"], noteData["updated_at"])
+      var createdAt = utilFunctions.returnReadableDate(noteData["created_at"]);
+      var modifiedAt = utilFunctions.returnReadableDate(noteData["updated_at"]);
       try {
         // setting the notion page id as null to update later.
         await $db.set(ticketKey, { "notionPageId": "" }, { setIf: "not_exist" });
@@ -35,14 +36,10 @@ exports = {
                   {
                     type: "text",
                     text: {
-                      content: date
+                      content: `Created at ${createdAt}, modified at ${modifiedAt}`
                     },
                     annotations: {
-                      bold: false,
                       italic: true,
-                      strikethrough: false,
-                      underline: false,
-                      code: false,
                       color: "gray"
                     }
                   }
@@ -66,9 +63,9 @@ exports = {
         console.log("note created successfully!")
 
 
-      } catch (ex) { // this code block is to the case if the notion page for that particular ticket has already been created
-        console.log(ex);
-        if (ex["message"]==="The setIf conditional request failed") {
+      } catch (error) { // this code block is to the case if the notion page for that particular ticket has already been created
+        console.log(error);
+        if (error["message"]==="The setIf conditional request failed") {
           const notion_page_id = await $db.get(ticketKey);
 
           const blockJSON = {
@@ -81,14 +78,10 @@ exports = {
                     {
                       type: "text",
                       text: {
-                        content: date
+                        content: `Created at ${createdAt}, modified at ${modifiedAt}`
                       },
                       annotations: {
-                        bold: false,
                         italic: true,
-                        strikethrough: false,
-                        underline: false,
-                        code: false,
                         color: "gray"
                       }
                     }
@@ -111,4 +104,8 @@ exports = {
       }
     }
   }
+
+  // onConversationUpdateHandler: async function(args){
+
+  // }
 }

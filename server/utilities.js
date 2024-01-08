@@ -69,29 +69,18 @@ function getConditionResult(text) {
     }
 }
 
-exports.returnReadableDate = (timestamp1,timestamp2) => {
-    const date1 = new Date(timestamp1);
-    const date2 = new Date(timestamp2);
-
-    const readableDate1 = date1.toLocaleString('en-US', {
-        month: 'long',
+exports.returnReadableDate = (timestamp) => {
+    const date = new Date(timestamp);
+    const options = {
+        month: 'short',
         day: 'numeric',
         year: 'numeric',
         hour: 'numeric',
         minute: 'numeric',
         second: 'numeric',
         hour12: true,
-    });
-
-    const readableDate2 = date2.toLocaleString('en-US',{
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-        hour12: true,
-    })
-    console.log(readableDate1 + readableDate2);
-    return `Created at ${readableDate1}, Modified at ${readableDate2}`;
+    }
+    const readableDate = date.toLocaleString('en-US', options)
+    console.log(readableDate);
+    return readableDate;
 }
