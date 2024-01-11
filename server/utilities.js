@@ -1,5 +1,5 @@
 
-exports.defaultParentBlock = async function (payload)  {
+exports.defaultParentBlock = async function (payload) {
     const noteData = payload.data.conversation;
 
     const parentJSON = {
@@ -22,7 +22,7 @@ exports.defaultParentBlock = async function (payload)  {
     return parentJSON
 }
 
-function returnReadableDate(timestamp)  {
+function returnReadableDate(timestamp) {
     const date = new Date(timestamp);
     const options = {
         month: 'short',
@@ -39,9 +39,9 @@ function returnReadableDate(timestamp)  {
 }
 
 
-exports.defaultChildBlock = async function(payload)  {
+exports.defaultChildBlock = async function (payload) {
     const noteData = payload.data.conversation;
-    
+
     let createdAt = returnReadableDate(noteData["created_at"]);
     let modifiedAt = returnReadableDate(noteData["updated_at"]);
 
@@ -72,34 +72,53 @@ exports.defaultChildBlock = async function(payload)  {
 }
 
 exports.appendBlock = async function appendBlock(data, body, bodyText) {
-    const result = { ...data };
+    // const result = { ...data };
     const list = bodyText.split("  ");
     const isList = getIfList(body);
-    const isTodoList = getIfList(body) && body.toLowerCase().includes("todo");
-    
+    const isTodoList = getIfList(body) && getIfContainsTodo(body);
+     
+    console.log(data);
     if (isList && isTodoList) { // for list type of content
         list.forEach(element => {
-            result["children"].push({
-                object: "block",
-                type: "to_do",
-                to_do: {
-                    rich_text: [
-                        {
-                            type: "text",
-                            text: {
-                                content: element
+            const isContainingTodo = getIfContainsTodo(element);
+            if (isContainingTodo) {
+                data["children"].push({
+                    object: "block",
+                    type: "paragraph",
+                    paragraph: {
+                        rich_text: [
+                            {
+                                type: "text",
+                                text: {
+                                    content: element
+                                }
                             }
-                        }
-                    ],
-                    checked: false,
-                    color: "default"
-                }
-            })
+                        ]
+                    }
+                });
+            } else {
+                data["children"].push({
+                    object: "block",
+                    type: "to_do",
+                    to_do: {
+                        rich_text: [
+                            {
+                                type: "text",
+                                text: {
+                                    content: element
+                                }
+                            }
+                        ],
+                        checked: false,
+                        color: "default"
+                    }
+                });
+            }
         });
-        return
+        
     } else if (isList) {
         list.forEach(element => {
-            result["children"].push({
+            data["children"].push({
                 object: "block",
                 type: "bulleted_list_item",
                 bulleted_list_item: {
@@ -114,9 +133,9 @@ exports.appendBlock = async function appendBlock(data, body, bodyText) {
                 }
             })
         });
-        return
+        
     } else { // for paragraph type of content
-        result["children"].push({
+        data["children"].push({
             object: "block",
             type: "paragraph",
             paragraph: {
@@ -131,10 +150,9 @@ exports.appendBlock = async function appendBlock(data, body, bodyText) {
             }
         });
 
-        // return result;
     }
     // to add a divider between separate notes of the same ticket.
-    result["children"].push({
+    data["children"].push({
         object: "block",
         type: "divider",
         divider: {}
@@ -145,6 +163,14 @@ function getIfList(text) {
     if (text.includes("<ol>") == true || text.includes("<ul>") == true || text.includes("</li>") == true) {
         return true;
     } else {
+        return false;
+    }
+}
+
+function getIfContainsTodo(text){
+    if(text.toLowerCase().includes("to do")|| text.toLowerCase().includes("todo")){
+        return true;
+    }else{
         return false;
     }
 }
