@@ -34,7 +34,6 @@ function returnReadableDate(timestamp) {
         hour12: true,
     }
     const readableDate = date.toLocaleString('en-US', options)
-    console.log(readableDate);
     return readableDate;
 }
 
@@ -77,7 +76,6 @@ exports.appendBlock = async function appendBlock(data, body, bodyText) {
     const isList = getIfList(body);
     const isTodoList = getIfList(body) && getIfContainsTodo(body);
      
-    console.log(data);
     if (isList && isTodoList) { // for list type of content
         list.forEach(element => {
             const isContainingTodo = getIfContainsTodo(element);
