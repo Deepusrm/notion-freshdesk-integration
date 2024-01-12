@@ -172,3 +172,16 @@ function getIfContainsTodo(text){
         return false;
     }
 }
+
+exports.returnArrayOfBlockId = function (payload){
+    const responseData = JSON.parse(payload.response);
+
+    const filteredResults = responseData["results"].filter(element=> element["type"]!="divider");
+
+    let blockIds = [];
+    filteredResults.forEach((element)=>{
+        blockIds.push(element["id"]);
+    })
+
+    return blockIds;
+}
