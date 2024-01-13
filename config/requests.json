@@ -34,5 +34,29 @@
                 "Notion-version":"2022-06-28" 
             }
         }
+    },
+    "onGettingParticularBlock":{
+        "schema":{
+            "method":"GET",
+            "host":"api.notion.com",
+            "path":"/v1/blocks/<%=context.block_id%>",
+            "headers":{
+                "Authorization":"Bearer <%=iparam.api_key%>",
+                "Content-Type":"application/json",
+                "Notion-version":"2022-06-28"
+            }
+        }
+    },
+    "onDeletingBlock":{
+        "schema":{
+            "method":"DELETE",
+            "host":"api.notion.com",
+            "path":"/v1/blocks/<%=context.block_id%>",
+            "headers":{
+                "Authorization":"Bearer <%=iparam.api_key%>",
+                "Content-Type":"application/json",
+                "Notion-version":"2022-06-28"
+            }
+        }
     }
 }
