@@ -161,7 +161,7 @@ exports.appendBlock = async function appendBlock(data, body, bodyText) {
 exports.returnArrayOfBlockId = function (payload){
     const responseData = JSON.parse(payload.response);
 
-    const filteredResults = responseData["results"].filter(element=> (element["type"]!="divider"&& element["type"]!=="paragraph"));
+    const filteredResults = responseData["results"].filter(element=> (element["type"]!="divider"));
 
     let blockIds = [];
     filteredResults.forEach((element)=>{
@@ -173,9 +173,9 @@ exports.returnArrayOfBlockId = function (payload){
 
 exports.returnListArray = function(sentence){
     const array = sentence.split("  ");
-    const listArray = array.filter((element)=> !payloadUtils.getIfContainsTodo(element));
+    // const listArray = array.filter((element)=> !payloadUtils.getIfContainsTodo(element));
 
-    return listArray;
+    return array;
 }
 
 exports.returnArrayOfBlockObjects = async function returnArrayOfBlockObjects(blockIds){
@@ -185,17 +185,40 @@ exports.returnArrayOfBlockObjects = async function returnArrayOfBlockObjects(blo
         let element = await getBlockObject(id);
         const blockDetails = {
             "blockId":"",
-            "content":""
+            "content":"",
+            "type":""
         }
-        blockDetails.blockId = id
+
+        let content;
+
+        
         if(element["type"]=="bulleted_list_item"){
-            blockDetails.content = element["bulleted_list_item"]["rich_text"][0]["text"]["content"];
+            blockDetails.blockId = id
+            blockDetails.type = element["type"];
+            content = element["bulleted_list_item"]["rich_text"][0]["text"]["content"]
+            blockDetails.content = content;
+
+            arrayOfBlockObjects.push(blockDetails);
         }else if(element["type"]=="to_do"){
-            blockDetails.content = element["to_do"]["rich_text"][0]["text"]["content"];
+            blockDetails.blockId = id
+            blockDetails.type = element["type"];
+            content = element["to_do"]["rich_text"][0]["text"]["content"]
+            blockDetails.content = content;
+
+            arrayOfBlockObjects.push(blockDetails);
+        }else if(element["type"]=="paragraph"){
+            content = element["paragraph"]["rich_text"][0]["text"]["content"];
+            if(!content.startsWith("Created at")){
+                blockDetails.blockId = id
+                blockDetails.type = element["type"];
+                blockDetails.content = content;
+
+                arrayOfBlockObjects.push(blockDetails);
+            }
         }
-        arrayOfBlockObjects.push(blockDetails);
     }
     
+    console.log(arrayOfBlockObjects);
    return arrayOfBlockObjects;
 
 }
@@ -219,6 +242,63 @@ exports.returnDeletedblocks = function returnDeletedblocks(list,blocks){
     return deletedBlocks;
 }
 
+exports.returnAddedBlocks = async function returnAddedBlocks(listArray,blockArray,pageId,conversationIds){
+    let noHeadingListArray = listArray.slice(1,listArray.length);
+    let noHeadingBlockArray = blockArray.slice(1,blockArray.length);
+
+    let addedBlocks = conversationIds;
+
+    for (const list in noHeadingListArray) {
+        let addedContent = noHeadingBlockArray[list]["content"];
+        if(!addedContent.includes(noHeadingListArray[list])){
+            let parentBlockId = noHeadingBlockArray[list-1]["blockId"];
+            let type = noHeadingBlockArray[list-1]["type"];
+
+            const generatedBlock = generateBlock(parentBlockId,addedContent,type);
+
+            const newBlockId = await addBlock(generatedBlock,pageId);
+
+            // addedBlocks.push({"indexToBeAdded":list,"newBlockId":newBlockId});
+
+            addedBlocks.splice(list,0,newBlockId);
+        }
+    }
+    console.log(addedBlocks);
+    return addedBlocks;
+}
+
+function generateBlock(parentBlockId,addedContent,contentType){
+    let blockToBeAdded  = {
+        children:[
+            {
+                object:"block",
+                type:contentType,
+                [contentType]:{
+                    rich_text:[{
+                        type:"text",
+                        text:{
+                            content:addedContent
+                        }
+                    }]
+                }
+            }
+        ],
+        after:parentBlockId
+    }
+
+    return blockToBeAdded;
+}
+
+const addBlock = async function addBlock(block,pageId){
+    const response = await $request.invokeTemplate("onAppendingToExistingNote",{
+        context:{page_id:pageId},
+        body:JSON.stringify(block)
+    })
+
+    const result = JSON.parse(response.response);
+    console.log(result["results"]);
+    return result["results"][0]["id"];
+}
 
 exports.deleteBlock = async function deleteBlock(blockId){
     const response = await $request.invokeTemplate("onDeletingBlock",{

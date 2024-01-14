@@ -90,13 +90,17 @@ exports = {
         console.log(blockArray);
         if(listArray.length < blockArray.length){
           const deletedBlocks = payloadUtils.returnDeletedblocks(listArray,blockArray);
-
           for(let block of deletedBlocks){
             await payloadUtils.deleteBlock(block);
             console.log(block+" deleted successfully");
           }
 
-          utils.updateDB(deletedBlocks,ticketKey,conversationBlocks,conversationId);
+          utils.updateDBByDelete(deletedBlocks,ticketKey,conversationBlocks,conversationId);
+
+        }else if(listArray.length > blockArray.length){
+          const pageId = ticket["ticket"]["notionPageId"];
+
+          const addedBlocks = await payloadUtils.returnAddedBlocks(listArray,blockArray,pageId,conversationBlocks);
         }
       }
     }

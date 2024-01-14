@@ -14,15 +14,22 @@ exports.getIfContainsTodo = function getIfContainsTodo(text){
     }
 }
 
-exports.updateDB = async function updateDB(deletedBlocks,ticketId,conversationBlocks,conversationId){
+exports.updateDBByDelete = async function updateDBByDelete(deletedBlocks,ticketId,conversationBlocks,conversationId){
 
-    let deletedConversations;
+    let deletedConversations = conversationBlocks;
     for(let block of deletedBlocks){
-        deletedConversations = conversationBlocks.filter((element)=> element!==block)
+        deletedConversations = deletedConversations.filter((element)=> element!==block);
     }
 
     const conversationPath = "ticket.conversations."+conversationId;
     
     await $db.update(ticketId,"set",{[conversationPath]:deletedConversations},{setIf:"exist"});
+    console.log("db updated successfully");
+}
+
+exports.updateDBByAdd = async function updateDBByAdd(addedBlocks,ticketId,conversationID){
+    const conversationPath = "ticket.conversations."+conversationID;
+
+    await $db.update(ticketId,"set",{[conversationPath]:addedBlocks},{setIf:"exist"});
     console.log("db updated successfully");
 }
