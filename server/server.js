@@ -87,7 +87,6 @@ exports = {
         const conversationBlocks = ticket["ticket"]["conversations"][conversationId];
 
         const blockArray = await payloadUtils.returnArrayOfBlockObjects(conversationBlocks);
-        console.log(blockArray);
         if(listArray.length < blockArray.length){
           const deletedBlocks = payloadUtils.returnDeletedblocks(listArray,blockArray);
           for(let block of deletedBlocks){
@@ -100,10 +99,16 @@ exports = {
         }else if(listArray.length > blockArray.length){
           const pageId = ticket["ticket"]["notionPageId"];
 
-          const addedBlocks = await payloadUtils.returnAddedBlocks(listArray,blockArray,pageId,conversationBlocks);
+          const blockContentArray = utils.returnContentArray(blockArray);
+          const addedBlocks = await payloadUtils.returnAddedBlocks(listArray,blockArray,pageId,conversationBlocks,blockContentArray);
+
+          const response = await utils.updateDBByAdd(addedBlocks,ticketKey,conversationId);
+          console.log(response);
         }
       }
     }
-  }
+  },
+
+  
 
 }

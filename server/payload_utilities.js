@@ -224,11 +224,16 @@ exports.returnArrayOfBlockObjects = async function returnArrayOfBlockObjects(blo
 }
 
 async function getBlockObject(id){
-    const response = await $request.invokeTemplate("onGettingParticularBlock",{
-        context:{block_id : id}
-    })
-    const results = JSON.parse(response.response);
-    return results;
+    try{
+        const response = await $request.invokeTemplate("onGettingParticularBlock",{
+            context:{block_id : id}
+        })
+        const results = JSON.parse(response.response);
+        return results;
+    }catch(error){
+        console.error(error);
+    }
+    
 }
 
 exports.returnDeletedblocks = function returnDeletedblocks(list,blocks){
@@ -242,21 +247,26 @@ exports.returnDeletedblocks = function returnDeletedblocks(list,blocks){
     return deletedBlocks;
 }
 
-exports.returnAddedBlocks = async function returnAddedBlocks(listArray,blockArray,pageId,conversationIds){
+exports.returnAddedBlocks = async function returnAddedBlocks(listArray,blockArray,pageId,conversationIds,textArray){
     let noHeadingListArray = listArray.slice(1,listArray.length);
+    console.log(noHeadingListArray)
     let noHeadingBlockArray = blockArray.slice(1,blockArray.length);
+    console.log(noHeadingBlockArray);
 
     let addedBlocks = conversationIds;
 
     for (const list in noHeadingListArray) {
-        let addedContent = noHeadingBlockArray[list]["content"];
-        if(!addedContent.includes(noHeadingListArray[list])){
-            let parentBlockId = noHeadingBlockArray[list-1]["blockId"];
+        console.log(list);
+        let addedContent = noHeadingListArray[list];
+        console.log(addedContent);
+        if(textArray.includes(addedContent)==false){
+            let parentBlockId = blockArray[list]["blockId"];
             let type = noHeadingBlockArray[list-1]["type"];
 
             const generatedBlock = generateBlock(parentBlockId,addedContent,type);
 
             const newBlockId = await addBlock(generatedBlock,pageId);
+            console.log(newBlockId);
 
             // addedBlocks.push({"indexToBeAdded":list,"newBlockId":newBlockId});
 
