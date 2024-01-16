@@ -247,33 +247,33 @@ exports.returnDeletedblocks = function returnDeletedblocks(list,blocks){
     return deletedBlocks;
 }
 
-exports.returnAddedBlocks = async function returnAddedBlocks(listArray,blockArray,pageId,conversationIds,textArray){
+exports.returnAddedBlocks = async function returnAddedBlocks(listArray,blockArray,pageId,conversationIds){
     let noHeadingListArray = listArray.slice(1,listArray.length);
-    console.log(noHeadingListArray)
-    let noHeadingBlockArray = blockArray.slice(1,blockArray.length);
-    console.log(noHeadingBlockArray);
+    // let noHeadingBlockArray = blockArray.slice(1,blockArray.length);
+
+    const textArray = blockArray.map((obj)=> obj.content).flat();
+
+    let modifiedBlockArray = blockArray;
 
     let addedBlocks = conversationIds;
 
     for (const list in noHeadingListArray) {
         console.log(list);
         let addedContent = noHeadingListArray[list];
-        console.log(addedContent);
         if(textArray.includes(addedContent)==false){
             let parentBlockId = blockArray[list]["blockId"];
-            let type = noHeadingBlockArray[list-1]["type"];
+            let type = blockArray[list]["type"];
 
-            const generatedBlock = generateBlock(parentBlockId,addedContent,type);
+            const [block,addContent,contentType] = generateBlock(parentBlockId,addedContent,type);
 
-            const newBlockId = await addBlock(generatedBlock,pageId);
-            console.log(newBlockId);
+            const newBlockDetails = await addBlock(block,addContent,contentType,pageId);
 
-            // addedBlocks.push({"indexToBeAdded":list,"newBlockId":newBlockId});
-
-            addedBlocks.splice(list,0,newBlockId);
+            addedBlocks.splice((+list+2),0,newBlockDetails.blockId);
+            modifiedBlockArray.splice((+list+1),0,newBlockDetails);
+            console.log(newBlockDetails.blockId + " added successfully")
         }
+        
     }
-    console.log(addedBlocks);
     return addedBlocks;
 }
 
@@ -296,19 +296,27 @@ function generateBlock(parentBlockId,addedContent,contentType){
         after:parentBlockId
     }
 
-    return blockToBeAdded;
+    return [blockToBeAdded,addedContent,contentType];
 }
 
-const addBlock = async function addBlock(block,pageId){
+const addBlock = async function addBlock(block,content,type,pageId){
     const response = await $request.invokeTemplate("onAppendingToExistingNote",{
         context:{page_id:pageId},
         body:JSON.stringify(block)
     })
 
     const result = JSON.parse(response.response);
-    console.log(result["results"]);
-    return result["results"][0]["id"];
+
+    const blockObject = {
+        "content":content,
+        "blockId":result["results"][0]["id"],
+        "type":type 
+    }
+
+    return blockObject;
 }
+
+
 
 exports.deleteBlock = async function deleteBlock(blockId){
     const response = await $request.invokeTemplate("onDeletingBlock",{

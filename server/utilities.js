@@ -27,14 +27,7 @@ exports.updateDBByDelete = async function updateDBByDelete(deletedBlocks,ticketI
     console.log("db updated successfully");
 }
 
-exports.returnContentArray = function returnContentArray(blockArray){
-    const textArray = [];
-    for(const text in blockArray){
-        textArray.push(blockArray[text]["content"]);
-    }
 
-    return textArray;
-}
 
 exports.updateDBByAdd = async function updateDBByAdd(addedBlocks,ticketId,conversationID){
     const conversationPath = "ticket.conversations."+conversationID;

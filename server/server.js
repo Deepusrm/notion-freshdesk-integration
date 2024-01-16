@@ -99,8 +99,7 @@ exports = {
         }else if(listArray.length > blockArray.length){
           const pageId = ticket["ticket"]["notionPageId"];
 
-          const blockContentArray = utils.returnContentArray(blockArray);
-          const addedBlocks = await payloadUtils.returnAddedBlocks(listArray,blockArray,pageId,conversationBlocks,blockContentArray);
+          const addedBlocks = await payloadUtils.returnAddedBlocks(listArray,blockArray,pageId,conversationBlocks);
 
           const response = await utils.updateDBByAdd(addedBlocks,ticketKey,conversationId);
           console.log(response);
