@@ -294,8 +294,47 @@ function generateBlock(parentBlockId,addedContent,contentType){
         ],
         after:parentBlockId
     }
-
     return [blockToBeAdded,addedContent,contentType];
+}
+
+function returnBlock(blockContent,contentType){
+    let block = {
+        object:"block",
+        type:contentType,
+        [contentType]:{
+            rich_text:[{
+                type:"text",
+                text:{
+                    content:blockContent
+                }
+            }]
+        }
+    }
+
+    return block;
+}
+
+exports.update = async function update(list,blockObjectArray){
+    for (const index in list) {
+        let blockObject = blockObjectArray[index];
+        if(list[index]!== blockObject["content"]){
+            const updatedBlock = returnBlock(list[index],blockObject["type"]);
+            await updateBlock(updatedBlock,blockObject["blockId"]);
+
+            blockObject["content"] = list[index];
+            console.log("updated successfully");
+        }
+    }
+    console.log(blockObjectArray);
+}
+
+const updateBlock = async function updateBlock(block,blockId){
+    const response = await $request.invokeTemplate("onUpdatingABlock",{
+        context:{block_id:blockId},
+        body:JSON.stringify(block)
+    })
+    const result = JSON.parse(response.response);
+    console.log(result);
 }
 
 const addBlock = async function addBlock(block,content,type,pageId){

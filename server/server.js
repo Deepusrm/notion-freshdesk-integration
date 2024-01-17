@@ -114,8 +114,12 @@ exports = {
           const response = await utils.updateDBByAdd(addedBlocks, ticketKey, conversationId);
           console.log(response);
 
+        }else if(listArray.length == blockArray.length){
+          await payloadUtils.update(listArray,blockArray);
         }
       }
+
+
     }
   }
 
