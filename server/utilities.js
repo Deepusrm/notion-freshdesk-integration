@@ -27,7 +27,11 @@ exports.updateDBByDelete = async function updateDBByDelete(deletedBlocks,ticketI
     console.log("db updated successfully");
 }
 
-
+exports.deleteConversationIdInDB = async function deleteConversationIdInDB(conversationID,ticket_id){
+    const conversationPath = "ticket.conversations."+conversationID;
+    await $db.update(ticket_id,"remove",[conversationPath],{setIf:"exist"});
+    console.log("conversation id removed from the db successfully!!")
+}
 
 exports.updateDBByAdd = async function updateDBByAdd(addedBlocks,ticketId,conversationID){
     const conversationPath = "ticket.conversations."+conversationID;

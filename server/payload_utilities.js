@@ -161,10 +161,10 @@ exports.appendBlock = async function appendBlock(data, body, bodyText) {
 exports.returnArrayOfBlockId = function (payload){
     const responseData = JSON.parse(payload.response);
 
-    const filteredResults = responseData["results"].filter(element=> (element["type"]!="divider"));
+    
 
     let blockIds = [];
-    filteredResults.forEach((element)=>{
+    responseData["results"].forEach((element)=>{
         blockIds.push(element["id"]);
     })
 
@@ -197,23 +197,23 @@ exports.returnArrayOfBlockObjects = async function returnArrayOfBlockObjects(blo
             blockDetails.type = element["type"];
             content = element["bulleted_list_item"]["rich_text"][0]["text"]["content"]
             blockDetails.content = content;
-
             arrayOfBlockObjects.push(blockDetails);
+            
         }else if(element["type"]=="to_do"){
             blockDetails.blockId = id
             blockDetails.type = element["type"];
             content = element["to_do"]["rich_text"][0]["text"]["content"]
             blockDetails.content = content;
-
             arrayOfBlockObjects.push(blockDetails);
+
         }else if(element["type"]=="paragraph"){
             content = element["paragraph"]["rich_text"][0]["text"]["content"];
             if(!content.startsWith("Created at")){
                 blockDetails.blockId = id
                 blockDetails.type = element["type"];
                 blockDetails.content = content;
-
                 arrayOfBlockObjects.push(blockDetails);
+
             }
         }
     }
@@ -258,7 +258,6 @@ exports.returnAddedBlocks = async function returnAddedBlocks(listArray,blockArra
     let addedBlocks = conversationIds;
 
     for (const list in noHeadingListArray) {
-        console.log(list);
         let addedContent = noHeadingListArray[list];
         if(textArray.includes(addedContent)==false){
             let parentBlockId = blockArray[list]["blockId"];
@@ -319,8 +318,9 @@ const addBlock = async function addBlock(block,content,type,pageId){
 
 
 exports.deleteBlock = async function deleteBlock(blockId){
-    const response = await $request.invokeTemplate("onDeletingBlock",{
+    await $request.invokeTemplate("onDeletingBlock",{
         context:{block_id:blockId}
     })
-    console.log(response);
+    console.log(blockId+" deleted");
 }
+

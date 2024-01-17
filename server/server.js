@@ -1,4 +1,4 @@
- 
+
 const payloadUtils = require('./payload_utilities');
 const utils = require('./utilities');
 
@@ -17,7 +17,7 @@ exports = {
       try {
         // setting the notion page id as null to update later.
         await $db.set(ticketKey, { ticket }, { setIf: "not_exist" });
-  
+
         // creating bodyJSON
         const parentJSON = (await payloadUtils.defaultParentBlock(args));
         const childJSON = (await payloadUtils.defaultChildBlock(args));
@@ -60,11 +60,11 @@ exports = {
             context: { page_id: notion_page_id["ticket"]["notionPageId"] },
             body: JSON.stringify(blockJSON)
           });
-          
+
           const blockIds = payloadUtils.returnArrayOfBlockId(responses);
 
-          let conversation = "ticket.conversations."+conversationId;
-          await $db.update(ticketKey,"set",{[conversation]:blockIds},{setIf:"exist"});
+          let conversation = "ticket.conversations." + conversationId;
+          await $db.update(ticketKey, "set", { [conversation]: blockIds }, { setIf: "exist" });
           console.log("note added successfully");
         } else {
           console.error(error);
@@ -75,39 +75,48 @@ exports = {
 
   onConversationUpdateHandler: async function (args) {
     const updatedNoteData = args.data.conversation;
-    if(updatedNoteData.private==true){
+    const ticketKey = `ticket-${updatedNoteData["ticket_id"]}`;
+    const conversationId = `No-${updatedNoteData["id"]}`;
+    const ticket = await $db.get(ticketKey);
+
+    const conversationBlocks = ticket["ticket"]["conversations"][conversationId];
+
+    if (updatedNoteData.private == true) {
+      if (updatedNoteData.deleted==true) {
+        for (const blockId of conversationBlocks) {
+          await payloadUtils.deleteBlock(blockId);
+        }
+        console.log("conversation deleted successfully!!");
+        await utils.deleteConversationIdInDB(conversationId,ticketKey);
+
+        return ;
+      }
+
+
       const body = updatedNoteData["body"]
       let isList = utils.getIfList(body);
-      if(isList){
+      if (isList) {
         const listArray = payloadUtils.returnListArray(updatedNoteData["body_text"]);
-        const ticketKey = `ticket-${updatedNoteData["ticket_id"]}`;
-        const conversationId = `No-${updatedNoteData["id"]}`;
-        const ticket = await $db.get(ticketKey);
-
-        const conversationBlocks = ticket["ticket"]["conversations"][conversationId];
-
         const blockArray = await payloadUtils.returnArrayOfBlockObjects(conversationBlocks);
-        if(listArray.length < blockArray.length){
-          const deletedBlocks = payloadUtils.returnDeletedblocks(listArray,blockArray);
-          for(let block of deletedBlocks){
+        if (listArray.length < blockArray.length) {
+
+          const deletedBlocks = payloadUtils.returnDeletedblocks(listArray, blockArray);
+          for (let block of deletedBlocks) {
             await payloadUtils.deleteBlock(block);
-            console.log(block+" deleted successfully");
+            console.log(block + " deleted successfully");
           }
+          utils.updateDBByDelete(deletedBlocks, ticketKey, conversationBlocks, conversationId);
 
-          utils.updateDBByDelete(deletedBlocks,ticketKey,conversationBlocks,conversationId);
+        } else if (listArray.length > blockArray.length) {
 
-        }else if(listArray.length > blockArray.length){
           const pageId = ticket["ticket"]["notionPageId"];
-
-          const addedBlocks = await payloadUtils.returnAddedBlocks(listArray,blockArray,pageId,conversationBlocks);
-
-          const response = await utils.updateDBByAdd(addedBlocks,ticketKey,conversationId);
+          const addedBlocks = await payloadUtils.returnAddedBlocks(listArray, blockArray, pageId, conversationBlocks);
+          const response = await utils.updateDBByAdd(addedBlocks, ticketKey, conversationId);
           console.log(response);
+
         }
       }
     }
-  },
-
-  
+  }
 
 }

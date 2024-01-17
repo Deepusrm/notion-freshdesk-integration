@@ -79,9 +79,6 @@
       "events": {
         "onConversationCreate": {
           "handler": "onConversationCreateHandler"
-        },
-        "onConversationUpdate": {
-          "handler": "onConversationUpdateHandler"
         }
       }
     }
