@@ -14,17 +14,13 @@ exports.getIfContainsTodo = function getIfContainsTodo(text){
     }
 }
 
-exports.updateDBByDelete = async function updateDBByDelete(deletedBlocks,ticketId,conversationBlocks,conversationId){
+exports.deleteBlocks = async function deleteBlocks(deletedBlocks,conversationBlocks){
 
     let deletedConversations = conversationBlocks;
     for(let block of deletedBlocks){
         deletedConversations = deletedConversations.filter((element)=> element!==block);
     }
-
-    const conversationPath = "ticket.conversations."+conversationId;
-    
-    await $db.update(ticketId,"set",{[conversationPath]:deletedConversations},{setIf:"exist"});
-    console.log("db updated successfully");
+    return deletedConversations;
 }
 
 exports.deleteConversationIdInDB = async function deleteConversationIdInDB(conversationID,ticket_id){
@@ -33,9 +29,10 @@ exports.deleteConversationIdInDB = async function deleteConversationIdInDB(conve
     console.log("conversation id removed from the db successfully!!")
 }
 
-exports.updateDBByAdd = async function updateDBByAdd(addedBlocks,ticketId,conversationID){
-    const conversationPath = "ticket.conversations."+conversationID;
-
-    await $db.update(ticketId,"set",{[conversationPath]:addedBlocks},{setIf:"exist"});
-    console.log("db updated successfully");
+exports.isBothJSONEqual = function isBothJSONEqualJSON(list,textContent){
+    if(JSON.stringify(list)=== JSON.stringify(textContent)){
+        return true;
+    }else{
+        return false;
+    }
 }

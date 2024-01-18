@@ -217,8 +217,6 @@ exports.returnArrayOfBlockObjects = async function returnArrayOfBlockObjects(blo
             }
         }
     }
-    
-    console.log(arrayOfBlockObjects);
    return arrayOfBlockObjects;
 
 }
@@ -236,27 +234,23 @@ async function getBlockObject(id){
     
 }
 
-exports.returnDeletedblocks = function returnDeletedblocks(list,blocks){
+exports.returnDeletedblocks = function returnDeletedblocks(list,blocks,textArray){
     const deletedBlocks = [];
     for(const block of blocks){
         if(!list.includes(block["content"])){
             deletedBlocks.push(block["blockId"]);
+            let index = blocks.indexOf(block);
+            textArray.splice(index,1);
+            blocks.splice(index,1);
         }
     }
-    console.log(deletedBlocks);
+    console.log(textArray);
     return deletedBlocks;
 }
 
-exports.returnAddedBlocks = async function returnAddedBlocks(listArray,blockArray,pageId,conversationIds){
+exports.returnAddedBlocks = async function returnAddedBlocks(listArray,blockArray,pageId,conversationIds,textArray){
     let noHeadingListArray = listArray.slice(1,listArray.length);
-    // let noHeadingBlockArray = blockArray.slice(1,blockArray.length);
-
-    const textArray = blockArray.map((obj)=> obj.content).flat();
-
-    let modifiedBlockArray = blockArray;
-
-    let addedBlocks = conversationIds;
-
+    
     for (const list in noHeadingListArray) {
         let addedContent = noHeadingListArray[list];
         if(textArray.includes(addedContent)==false){
@@ -267,13 +261,14 @@ exports.returnAddedBlocks = async function returnAddedBlocks(listArray,blockArra
 
             const newBlockDetails = await addBlock(block,addContent,contentType,pageId);
 
-            addedBlocks.splice((+list+2),0,newBlockDetails.blockId);
-            modifiedBlockArray.splice((+list+1),0,newBlockDetails);
             console.log(newBlockDetails.blockId + " added successfully")
+            conversationIds.splice((+list+2),0,newBlockDetails.blockId);
+            blockArray.splice((+list+1),0,newBlockDetails);
+            textArray.splice((+list+1),0,newBlockDetails.content);
         }
         
     }
-    return addedBlocks;
+    return conversationIds;
 }
 
 function generateBlock(parentBlockId,addedContent,contentType){
@@ -329,12 +324,10 @@ exports.update = async function update(list,blockObjectArray){
 }
 
 const updateBlock = async function updateBlock(block,blockId){
-    const response = await $request.invokeTemplate("onUpdatingABlock",{
+    await $request.invokeTemplate("onUpdatingABlock",{
         context:{block_id:blockId},
         body:JSON.stringify(block)
     })
-    const result = JSON.parse(response.response);
-    console.log(result);
 }
 
 const addBlock = async function addBlock(block,content,type,pageId){

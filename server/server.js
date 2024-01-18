@@ -63,6 +63,7 @@ exports = {
 
           const blockIds = payloadUtils.returnArrayOfBlockId(responses);
 
+          console.log(blockIds);
           let conversation = "ticket.conversations." + conversationId;
           await $db.update(ticketKey, "set", { [conversation]: blockIds }, { setIf: "exist" });
           console.log("note added successfully");
@@ -79,7 +80,8 @@ exports = {
     const conversationId = `No-${updatedNoteData["id"]}`;
     const ticket = await $db.get(ticketKey);
 
-    const conversationBlocks = ticket["ticket"]["conversations"][conversationId];
+    let conversationBlocks = ticket["ticket"]["conversations"][conversationId];
+    console.log(conversationBlocks);
 
     if (updatedNoteData.private == true) {
       if (updatedNoteData.deleted==true) {
@@ -97,26 +99,55 @@ exports = {
       let isList = utils.getIfList(body);
       if (isList) {
         const listArray = payloadUtils.returnListArray(updatedNoteData["body_text"]);
-        const blockArray = await payloadUtils.returnArrayOfBlockObjects(conversationBlocks);
-        if (listArray.length < blockArray.length) {
+        let blockArray = await payloadUtils.returnArrayOfBlockObjects(conversationBlocks);
+        let textArray = blockArray.map((obj)=> obj.content).flat();
 
-          const deletedBlocks = payloadUtils.returnDeletedblocks(listArray, blockArray);
-          for (let block of deletedBlocks) {
-            await payloadUtils.deleteBlock(block);
-            console.log(block + " deleted successfully");
+        let isEqual = JSON.stringify(listArray)===JSON.stringify(textArray);
+
+        while(isEqual===false){
+          if (listArray.length < blockArray.length) {
+
+            const deletedBlocks = payloadUtils.returnDeletedblocks(listArray, blockArray,textArray);
+            for (let block of deletedBlocks) {
+              await payloadUtils.deleteBlock(block);
+              
+            }
+            conversationBlocks = await utils.deleteBlocks(deletedBlocks, conversationBlocks);
+            console.log("blocks after deleted : ");
+            console.log(conversationBlocks);
+            
+            let isBothJSONEqual = utils.isBothJSONEqual(listArray,textArray);
+            if(isBothJSONEqual===true){
+              isEqual = true;
+            }
+
+  
+          } if (listArray.length > blockArray.length) {
+  
+            const pageId = ticket["ticket"]["notionPageId"];
+            await payloadUtils.returnAddedBlocks(listArray, blockArray, pageId, conversationBlocks,textArray);
+            // const response = await utils.updateDBByAdd(addedBlocks, ticketKey, conversationId);
+            console.log("blocks after added : ");
+            console.log(conversationBlocks);
+
+            let isBothJSONEqual = utils.isBothJSONEqual(listArray,textArray);
+            if(isBothJSONEqual===true){
+              isEqual = true;
+            }
+  
+          }if((listArray.length == blockArray.length)&&(JSON.stringify(listArray)!==JSON.stringify(textArray))){
+            await payloadUtils.update(listArray,blockArray);
+            isEqual = true;
           }
-          utils.updateDBByDelete(deletedBlocks, ticketKey, conversationBlocks, conversationId);
-
-        } else if (listArray.length > blockArray.length) {
-
-          const pageId = ticket["ticket"]["notionPageId"];
-          const addedBlocks = await payloadUtils.returnAddedBlocks(listArray, blockArray, pageId, conversationBlocks);
-          const response = await utils.updateDBByAdd(addedBlocks, ticketKey, conversationId);
-          console.log(response);
-
-        }else if(listArray.length == blockArray.length){
-          await payloadUtils.update(listArray,blockArray);
+          console.log(isEqual);
         }
+
+        const conversationPath = "ticket.conversations."+conversationId;
+        console.log(conversationBlocks);
+        const response = await $db.update(ticketKey,"set",{[conversationPath]:conversationBlocks},{setIf:"exist"});
+        console.log(response);
+        console.log("successfully updated db and note!!");
+        
       }
 
 
