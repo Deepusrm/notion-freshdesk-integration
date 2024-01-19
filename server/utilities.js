@@ -36,3 +36,18 @@ exports.isBothJSONEqual = function isBothJSONEqualJSON(list,textContent){
         return false;
     }
 }
+
+exports.returnReadableDate = function returnReadableDate(timestamp) {
+    const date = new Date(timestamp);
+    const options = {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        hour12: true,
+    }
+    const readableDate = date.toLocaleString('en-US', options)
+    return readableDate;
+}

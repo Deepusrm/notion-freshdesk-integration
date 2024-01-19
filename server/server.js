@@ -144,6 +144,7 @@ exports = {
 
         const conversationPath = "ticket.conversations."+conversationId;
         console.log(conversationBlocks);
+        await payloadUtils.updateTimeStamp(conversationBlocks[0],updatedNoteData["last_modified_timestamp"],updatedNoteData["created_at"]);
         const response = await $db.update(ticketKey,"set",{[conversationPath]:conversationBlocks},{setIf:"exist"});
         console.log(response);
         console.log("successfully updated db and note!!");

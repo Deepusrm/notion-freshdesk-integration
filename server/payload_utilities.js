@@ -23,27 +23,11 @@ exports.defaultParentBlock = async function (payload) {
     return parentJSON
 }
 
-function returnReadableDate(timestamp) {
-    const date = new Date(timestamp);
-    const options = {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-        hour12: true,
-    }
-    const readableDate = date.toLocaleString('en-US', options)
-    return readableDate;
-}
-
-
 exports.defaultChildBlock = async function (payload) {
     const noteData = payload.data.conversation;
 
-    let createdAt = returnReadableDate(noteData["created_at"]);
-    let modifiedAt = returnReadableDate(noteData["updated_at"]);
+    let createdAt = payloadUtils.returnReadableDate(noteData["created_at"]);
+    let modifiedAt = payloadUtils.returnReadableDate(noteData["updated_at"]);
 
     const childJSON = {
         children: [
@@ -347,8 +331,6 @@ const addBlock = async function addBlock(block,content,type,pageId){
     return blockObject;
 }
 
-
-
 exports.deleteBlock = async function deleteBlock(blockId){
     await $request.invokeTemplate("onDeletingBlock",{
         context:{block_id:blockId}
@@ -356,3 +338,27 @@ exports.deleteBlock = async function deleteBlock(blockId){
     console.log(blockId+" deleted");
 }
 
+
+exports.updateTimeStamp = async function updateTimeStamp(blockId,modifiedAt,createdAt){
+    const timeOfModification = payloadUtils.returnReadableDate(modifiedAt);
+    const timeOfCreation = payloadUtils.returnReadableDate(createdAt);
+
+    const updatedJSON = {
+        object:"block",
+        type:"paragraph",
+        paragraph:{
+            rich_text:[{
+                text:{
+                    content:`Created at ${timeOfCreation}, Modified at ${timeOfModification}`
+                },
+                annotations:{
+                    italic:true,
+                    color:"gray"
+                }
+            }],
+        }
+    }
+
+    await updateBlock(updatedJSON,blockId);
+    console.log("timestamp updated successfully !!");
+}
