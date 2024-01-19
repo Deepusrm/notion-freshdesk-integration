@@ -3,78 +3,12 @@
   "modules": {
     "common": {
       "requests": {
-        "onCreatingPrivateNote": {
-          "schema": {
-            "method": "POST",
-            "host": "api.notion.com",
-            "path": "/v1/pages",
-            "headers": {
-              "Authorization": "Bearer <%=iparam.api_key%>",
-              "Content-Type": "application/json",
-              "Notion-version": "2022-06-28"
-            }
-          }
-        },
-        "onAppendingToExistingNote": {
-          "schema": {
-            "method": "PATCH",
-            "host": "api.notion.com",
-            "path": "/v1/blocks/<%=context.page_id%>/children",
-            "headers": {
-              "Authorization": "Bearer <%=iparam.api_key%>",
-              "Content-Type": "application/json",
-              "Notion-version": "2022-06-28"
-            }
-          }
-        },
-        "onGettingBlocksOfPage": {
-          "schema": {
-            "method": "GET",
-            "host": "api.notion.com",
-            "path": "/v1/blocks/<%=context.page_id%>/children",
-            "headers": {
-              "Authorization": "Bearer <%=iparam.api_key%>",
-              "Content-Type": "application/json",
-              "Notion-version": "2022-06-28"
-            }
-          }
-        },
-        "onGettingParticularBlock": {
-          "schema": {
-            "method": "GET",
-            "host": "api.notion.com",
-            "path": "/v1/blocks/<%=context.block_id%>",
-            "headers": {
-              "Authorization": "Bearer <%=iparam.api_key%>",
-              "Content-Type": "application/json",
-              "Notion-version": "2022-06-28"
-            }
-          }
-        },
-        "onDeletingBlock": {
-          "schema": {
-            "method": "DELETE",
-            "host": "api.notion.com",
-            "path": "/v1/blocks/<%=context.block_id%>",
-            "headers": {
-              "Authorization": "Bearer <%=iparam.api_key%>",
-              "Content-Type": "application/json",
-              "Notion-version": "2022-06-28"
-            }
-          }
-        },
-        "onUpdatingABlock": {
-          "schema": {
-            "method": "PATCH",
-            "host": "api.notion.com",
-            "path": "/v1/blocks/<%=context.block_id%>",
-            "headers": {
-              "Authorization": "Bearer <%=iparam.api_key%>",
-              "Content-Type": "application/json",
-              "Notion-version": "2022-06-28"
-            }
-          }
-        }
+        "onCreatingPrivateNote": {},
+        "onAppendingToExistingNote": {},
+        "onGettingBlocksOfPage": {},
+        "onGettingParticularBlock": {},
+        "onDeletingBlock": {},
+        "onUpdatingABlock": {}
       }
     },
     "support_ticket": {
